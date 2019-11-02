@@ -1,0 +1,2532 @@
+
+<!DOCTYPE html>
+
+
+
+
+<html>
+<head>
+<title>HDB | Flats Available for Selection (For Invited Applicants)</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="description" content="If you have been invited to select a flat, you might want to check out the flats available for selection."/>
+
+<script  src="script/config.js"></script>
+<script> h_config.showrateservice = true; </script>
+
+<link rel="stylesheet" href="theme/vendor/foundation.css" />
+<link rel="stylesheet" href="theme/vendor/style.css"/>
+<link href="theme/vendor/demo.css" rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="theme/vendor/jquery.iviewer.css"/>
+<link rel="stylesheet" href="theme/vendor/redips-dialog.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="theme/vendor/simplelightbox.min.css">
+
+<!-- All common scripts should be below config script-->
+<script src="/web/fi10/infoweb/common/js/FI10Zhead.js"></script>
+<script src="/web/fi10/infoweb/common/js/FI10Zheader.js"></script>
+
+<script language='JavaScript' type='text/javascript'>var GlobalServerName="https://services2.hdb.gov.sg";</script>
+<script language="JavaScript" src="script/bookmark.js"></script>
+<script src="script/bp13main.js"></script> 
+
+<script src="script/vendor/jquery-migrate-3.0.1.js"></script>
+<script src="script/vendor/jquery.mousewheel.js"></script>
+<script src="script/vendor/jquery.v2o_iviewer.js"></script>
+<script src="script/vendor/foundation.min.js"></script>
+<!-- <script src="script/vendor/plugins.js"></script> -->
+<script src="script/vendor/slick.js"></script>
+<script src="script/vendor/jquery.panzoom.js"></script>
+<script src="script/vendor/main.js"></script>
+<script src="script/vendor/modernizr.js"></script>
+<script src="script/vendor/foundation.topbar.js"></script>
+<script src="script/vendor/buttons.js"></script>
+<!-- <script src="script/vendor/lightbox.js"></script> -->
+<script src="script/vendor/simple-lightbox.js"></script>
+<script src="script/vendor/foundation.interchange.js"></script>
+<script src="script/vendor/BP13LboxScript.js"></script>
+
+<style>
+.zoom-container button.zoom-in {
+    background-image: url(images/vendor/iviewer_zoom_in.gif);
+}
+.zoom-container button.zoom-out {
+    background-image: url(images/vendor/iviewer_zoom_out.gif);
+}
+.slick-prev
+{
+    background: url(images/vendor/prev.png) no-repeat;
+    left: 0;
+}
+.slick-next
+{
+    background: url(images/vendor/next.png) no-repeat;
+    right: 0;
+}
+</style>
+<script type="text/javascript">
+var userAgent = window.navigator.userAgent.toLowerCase();
+var selection = "BTO";
+var townValue  = "";
+var flatType  = "";
+var desType   = "";
+var ethnicA   = "";
+var ethnicM   = "";
+var ethnicC   = "";
+var ethnicO   = "";
+var dteBallot = "";
+var bonusFt   = "N";
+var currentAction = ""; 
+var bmUnits = "";
+var serverMap = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/";
+var isRpLoaded = false;
+var isFloorLoaded = false;
+var selectedFlat = "5-Room";
+var stName = "New Punggol Rd";
+var townMapCalled = false;
+var serverName = "services2.hdb.gov.sg";
+
+// This method is used to execute the script while startup page.
+ $(document).ready(function(){ 
+    var strMsgFromApp = "";
+    var strShortListed = "";
+    var strSessionExpired = "";
+    var strLogOut = "";
+    
+    //window.resizeTo(525, 685);
+    //window.resizeTo(1030, 720);
+    getParameters();
+    
+    if(selectedFlat.indexOf("2-Room") != -1) {
+        document.getElementById("2RoomFlexiFooter").style.display = "block";
+    } else {
+        document.getElementById("2RoomFlexiFooter").style.display = "none";
+    }
+    
+    if(selectedFlat == "SA") {
+        document.getElementById("saFooter").style.display = "block";
+    } else {
+        document.getElementById("saFooter").style.display = "none";
+    }
+    
+    if(strMsgFromApp.length > 0) {
+        showMsgFromApp(strMsgFromApp);
+    }
+    if(strShortListed.length > 0) {
+        showShortListedInfo();
+    }
+    if(strSessionExpired.length > 0) {
+        sessionExpired();
+    }
+    if(strLogOut.length > 0) {
+        doLogOut();
+    }
+});
+
+// This method is used to get the parameter values and set it into the script variables 
+function getParameters() {
+    var param = window.location.search;
+    var splitParam = param.split("&");
+
+    for(var i=0;i<splitParam.length;i++){
+        var value = splitParam[i]; 
+        if(splitParam[i].indexOf("Town=") != -1) {
+        townValue = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("Flat=") != -1) {
+        flatType = value.substr(value.indexOf("=")+1,value.length);
+        flatType = flatType.replace("+"," ");
+        flatType = flatType.replace("%20"," ");
+        }
+        if(splitParam[i].indexOf("DesType=") != -1) {
+        desType = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("ethnic=") != -1 || splitParam[i].indexOf("EthnicA") != -1) {
+        ethnicA = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("EthnicM=") != -1) {
+        ethnicM = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("EthnicC=") != -1) {
+        ethnicC = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("EthnicO=") != -1) {
+        ethnicO = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("dteBallot=") != -1) {
+        dteBallot = value.substr(value.indexOf("=")+1,value.length);
+        }
+        if(splitParam[i].indexOf("BonusFlats1=") != -1) {
+        bonusFt = value.substr(value.indexOf("=")+1,value.length);
+        }
+    }
+}
+
+// This method is used to search the block based on the user selection options 
+function checkBlkSearch(id) {
+    var ethnic = document.getElementById("ethnic").value;
+    var flat = document.getElementById("Flat").value;
+    if(ethnic == "Y"){
+        document.getElementById("EthnicA").value = ethnic;
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "M"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = ethnic;  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "C"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = ethnic;
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "O"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = ethnic;
+    }   
+    
+    // As the design field is removed from the May,2015 ballotQtr, we have to set the design type manually as Standard or, Premium or Any.
+    if(flat=="3-Room") {
+        document.getElementById("DesType").value = "S";
+    } else if(flat=="3P-Room") {
+        document.getElementById("DesType").value="P";
+    } else {
+        document.getElementById("DesType").value="A";
+    }
+    
+    document.getElementById(id).disabled = true;
+    document.getElementById("Block").value = "0"; 
+    document.getElementById("searchDetails").value = "Y";   
+    document.getElementById("flatSummary").submit();
+}
+
+function callTownSearch(town) {
+    var ethnic = document.getElementById("ethnic").value;
+    var flat = document.getElementById("Flat").value;
+    if(ethnic == "Y"){
+        document.getElementById("EthnicA").value = ethnic;
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "M"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = ethnic;  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "C"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = ethnic;
+        document.getElementById("EthnicO").value = "";
+    }else if(ethnic == "O"){
+        document.getElementById("EthnicA").value = "";
+        document.getElementById("EthnicM").value = "";  
+        document.getElementById("EthnicC").value = "";
+        document.getElementById("EthnicO").value = ethnic;
+    }   
+    
+    // As the design field is removed from the May,2015 ballotQtr, we have to set the design type manually as Standard or, Premium or Any.
+    if(flat=="3-Room") {
+        document.getElementById("DesType").value = "S";
+    } else if(flat=="3P-Room") {
+        document.getElementById("DesType").value="P";
+    } else {
+        document.getElementById("DesType").value="A";
+    }
+    document.getElementById("selectedTown").value = town; 
+    //document.getElementById(id).disabled = true;
+    document.getElementById("Block").value = "0"; 
+    document.getElementById("searchDetails").value = "Y";   
+    document.getElementById("flatSummary").submit();
+    
+}
+// This method is used to call the selected town by the user    
+function callTown(town) {
+    var url = window.location.href;
+    var server = url.substr(0, url.indexOf("Town=")+5);
+    var parameter1 = url.substr(url.indexOf("&Flat_Type="), url.length);
+    var selectedFlat = "5-Room";
+    document.getElementById("selectedTown").value = town; 
+    
+    if (url.indexOf("Block") != -1) {
+        var parameter2 = parameter1.substr(0, parameter1.indexOf("Block="));
+        var parameter3 = parameter1.substr(parameter1.indexOf("&DesType="), parameter1.length);
+        url = server + town + parameter2 + "&Block=0" + parameter3 + "&isTownChange=Yes&selectedFlat="+selectedFlat;
+    } else {
+        url = server + town + parameter1 + "&isTownChange=Yes&selectedFlat="+selectedFlat;
+    }
+        
+    window.open(url,"_self");
+    
+}
+
+// This method is used to get the selected block informations 
+function checkBlk(value, neigh, contract) { 
+    document.getElementById("Block").value = value;
+    document.getElementById("Neighbourhood").value = neigh; 
+    document.getElementById("Contract").value = contract;
+    //document.getElementById("flatSummary").submit(); 
+    
+    //
+    var hostSpins = GlobalServerName;
+    //var spinsHost = hostSpins.replace("https", "http");
+    var spinsHost = hostSpins;
+    document.forms[0].action=spinsHost + "/webapp/BP13AWFlatAvail/BP13EBSFlatSearch";
+    document.forms[0].method="get";
+    document.forms[0].submit();
+}
+
+// This method is used to open a popup window to display the search criteria
+function openPopup(){ 
+    var projNameText = "";
+    var projName = "";
+    var viewOption = "1"; //hardcoded to 1,should get not booked results always 
+    var foc;
+    var flatValue = flatType;
+    var projNameCount = "2";
+    
+    if(selection=="BTO" && projNameCount >1){
+        var projNameObj=document.getElementById("projName");
+        projName =projNameObj.options[projNameObj.selectedIndex].value;     
+        projNameText = projNameObj.options[projNameObj.selectedIndex].innerHTML;
+    }
+
+    var url = "/webapp/BP13AWFlatAvail/BP13SCheapestUnit?Town="+townValue+"&selection="+selection+"&DesType="+desType+"&"+
+                "EthnicA="+ethnicA+"&EthnicO="+ethnicO+"&EthnicC="+ethnicC+"&EthnicM="+ethnicM+"&Flat="+flatValue+""+
+                "&ViewOption="+viewOption+"&dteBallot="+dteBallot+"&projName="+projName+"&projNameText="+projNameText+"&bonusFt="+bonusFt+"";
+        
+    foc = window.open(url, "openmyunit", "toolbar=0,location=0,directories=0,status=1,menubar=0,scrollbars=1,resizable=yes,width=420,height=400,top=50,left=50"); 
+    if(foc!=null){
+        foc.focus(); 
+    }
+}
+function displayMap() {
+    var isMay19OnwardDt = "Y";
+    document.getElementById("siteMapDiv").style.display = "none";
+    document.getElementById("townMapDiv").style.display = "none";
+    document.getElementById("blockMapDiv").style.display = "none";
+    if( selection=="BTO" && isMay19OnwardDt == "Y") {
+         document.getElementById("siteMapLightDiv").style.display = "none";
+         document.getElementById("townMapLightDiv").style.display = "none";
+         document.getElementById("blockMapLightDiv").style.display = "none";
+         document.getElementById("unitMapLightDiv").style.display = "none";
+         document.getElementById("floorMapLightDiv").style.display = "none";
+         document.getElementById("layoutMapLightDiv").style.display = "none";
+         document.getElementById("genSpecLightDiv").style.display = "none";
+    
+    } else if(selection=="SBF" && isMay19OnwardDt == "Y") {
+       document.getElementById("siteMapLightDiv").style.display = "none";
+       //document.getElementById("townMapLightDiv").style.display = "none";
+       document.getElementById("blockMapLightDiv").style.display = "none";
+       document.getElementById("genSpecLightDiv").style.display = "none";
+    
+    } else if(selection=="OBF" || selection=="ROF" ) {
+       document.getElementById("siteMapLightDiv").style.display = "none";
+       document.getElementById("blockMapLightDiv").style.display = "none";
+       document.getElementById("genSpecLightDiv").style.display = "none";
+    }
+    document.getElementById("udMapDiv").style.display = "none";
+    document.getElementById("floorMapDiv").style.display = "none";
+    document.getElementById("layoutMapDiv").style.display = "none";
+    document.getElementById("genSpecMapDiv").style.display = "none";
+    document.getElementById("addMapMapDiv").style.display = "none";
+    document.getElementById("largeMapView").style.display = "none";
+}
+
+
+// This method is used to display the selected map by the user  
+function callMap(button) {
+    var sitePlan    = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_SITEPLAN_images_2671/siteplan_pg_s4c15.png";
+    var townMap     = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_TOWNMAP_images_2671/townmap_pg_s4c15.png";
+    /* var socialFac   = ""; */
+    var blockPlan   = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_24.png";
+    var unitDis     = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_UNITDIS_images_2671/unitdis_pg_s4c15_445a.png";
+    var typeFlrPlan = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_TFP_images_2671/tfp_pg_s4c15.png";
+    var layoutIdea  = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/";
+    var genSpecs    = "http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_GENSPECS_images_2671/genspecs_pg_s4c15.png";
+    var addMap      = "";
+    var floorPlan   = "";
+    var rp          = "";
+    var downloadPDF = "";
+    var ballot = "201909";
+    var isMay19OnwardDt = "Y";
+    
+    
+    if(userAgent.indexOf("wv") > -1) {
+            if(sitePlan.indexOf("http://") > -1 || townMap.indexOf("http://") > -1 || blockPlan.indexOf("http://") > -1 || unitDis.indexOf("http://") > -1 || typeFlrPlan.indexOf("http://") > -1 || layoutIdea.indexOf("http://") > -1 || genSpecs.indexOf("http://") > -1 || addMap.indexOf("http://") > -1 || downloadPDF.indexOf("http://") > -1) {
+              sitePlan    = sitePlan.replace("http", "https");  
+              townMap     = townMap.replace("http", "https");
+              blockPlan   = blockPlan.replace("http", "https");
+              unitDis     = unitDis.replace("http", "https");
+              typeFlrPlan = typeFlrPlan.replace("http", "https");
+              layoutIdea  = layoutIdea.replace("http", "https");
+              genSpecs    = genSpecs.replace("http", "https");
+              addMap      = addMap.replace("http", "https");
+              downloadPDF = downloadPDF.replace("http", "https");
+              
+            }
+        
+        if(townMap.indexOf("esales.hdb.gov.sg") > -1) {
+          sitePlan    = sitePlan.replace("esales","www20");
+          townMap     = townMap.replace("esales","www20");
+          blockPlan   = blockPlan.replace("esales","www20");
+          unitDis     = unitDis.replace("esales","www20");
+          typeFlrPlan = typeFlrPlan.replace("esales","www20");
+          layoutIdea  = layoutIdea.replace("esales","www20");
+          genSpecs    = genSpecs.replace("esales","www20");
+          addMap      = addMap.replace("esales","www20");
+          downloadPDF = downloadPDF.replace("esales","www20");
+        } else if(townMap.indexOf("wwwuat.nicehomes.com.sg") > -1) { // This condition only for testing
+          sitePlan    = sitePlan.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          townMap     = townMap.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          blockPlan   = blockPlan.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          unitDis     = unitDis.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          typeFlrPlan = typeFlrPlan.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          layoutIdea  = layoutIdea.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          genSpecs    = genSpecs.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          addMap      = addMap.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+          downloadPDF = downloadPDF.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+         } 
+    }
+    
+    if(button == "sitePlan") {
+            displayMap();
+            callBrochure(sitePlan, button);
+            document.getElementById("largeMapView").style.display = "block";
+            document.getElementById("mapLinkView").href=sitePlan;
+            if((selection=="BTO" || selection=="SBF" || selection=="OBF" || selection=="ROF") && isMay19OnwardDt == "Y" ) {
+               document.getElementById("siteMapLightDiv").style.display = "block";
+               document.getElementById("sitePlanLboxUrl").click();
+              
+            } else {
+             document.getElementById("siteMapDiv").style.display = "block";
+             document.getElementById("vendor1").style.transform="none";
+             document.getElementById("vendor1").src=sitePlan;
+             document.getElementById("socialFooter").style.display = "none";
+            }
+           
+            
+         
+    } else if (button == "townMap") {
+          displayMap();
+          //document.getElementById("largeMapView").style.display = "block";
+          //document.getElementById("mapLinkView").href=townMap;
+          if( (selection=="SBF" || selection=="ROF" || selection=="OBF") && townMapCalled == false)  {
+            //displayMap();
+            
+           townMapSBF();//if Multiple radio button in SBF Exc  
+           townMapCalled = true;
+           if(selection=="SBF" || selection=="OBF" && isMay19OnwardDt == "Y") {
+               document.getElementById("largeMapView").style.display = "block";
+               document.getElementById("mapLinkView").href=townMap;
+           }
+            
+            
+          } else {//BTO
+            
+            callBrochure(townMap, button);
+            if(selection=="BTO" || selection=="SER") {
+                //document.getElementById("largeMapView").style.display = "block";
+                document.getElementById("largeMapView").style.display = "block";
+                document.getElementById("mapLinkView").href=townMap;
+                if(selection=="BTO" && isMay19OnwardDt == "Y" ){
+                    document.getElementById("townMapLightDiv").style.display = "block";
+                    document.getElementById("townMapLboxUrl").click();
+                
+                } else {
+                    document.getElementById("townMapDiv").style.display = "block";
+                    document.getElementById("vendor2").style.transform="none";
+                    document.getElementById("vendor2").src=townMap; 
+                }
+            }                       
+          } 
+        document.getElementById("socialFooter").style.display = "inline";
+        
+    }  else if (button == "socialFacilities") {
+        //callBrochure(socialFac, button);
+        window.open(socialFac);
+    }  else if (button == "blockPlan") {
+        displayMap();
+        callBrochure(blockPlan, button);
+        if( (selection=="BTO" || selection=="SBF" || selection=="OBF" || selection=="ROF")  && isMay19OnwardDt == "Y"  ) {
+          document.getElementById("blockMapLightDiv").style.display = "block";
+        
+        } else{
+           document.getElementById("blockMapDiv").style.display = "block";
+           document.getElementById("vendor3").style.transform="none";
+           document.getElementById("vendor3").src=blockPlan; 
+           document.getElementById("largeMapView").style.display = "block";
+           document.getElementById("mapLinkView").href=blockPlan;
+        }
+        
+        document.getElementById("socialFooter").style.display = "none";
+         
+    } else if (button == "unitDis") {
+        displayMap();
+        callBrochure(unitDis, button);
+        document.getElementById("largeMapView").style.display = "block";
+        document.getElementById("mapLinkView").href=unitDis;
+        if(selection=="BTO" && isMay19OnwardDt == "Y") {
+          document.getElementById("unitMapLightDiv").style.display = "block";
+          document.getElementById("unitMapLboxUrl").click();
+        }else{
+            document.getElementById("udMapDiv").style.display = "block";
+            document.getElementById("vendor4").style.transform="none";
+            document.getElementById("vendor4").src=unitDis;
+            document.getElementById("socialFooter").style.display = "none";
+        }
+            
+        
+    } else if (button == "typeFlrPlan") {
+        displayMap();
+        callBrochure(typeFlrPlan, button);
+        if(selection=="BTO" && isMay19OnwardDt == "Y") {
+            document.getElementById("floorMapLightDiv").style.display = "block";
+        }else{
+            document.getElementById("largeMapView").style.display = "block";
+            document.getElementById("mapLinkView").href=typeFlrPlan;
+            document.getElementById("floorMapDiv").style.display = "block";
+            document.getElementById("vendor5").style.transform="none";
+            document.getElementById("vendor5").src=typeFlrPlan;
+            document.getElementById("socialFooter").style.display = "none";
+        }
+         
+    } else if (button == "layoutIdea") {
+        displayMap();
+        callBrochure(layoutIdea, button);
+        
+        if(selection=="BTO" && isMay19OnwardDt == "Y") {
+            document.getElementById("layoutMapLightDiv").style.display = "block";
+        }else{
+            document.getElementById("largeMapView").style.display = "block";
+            document.getElementById("mapLinkView").href=layoutIdea;
+            document.getElementById("layoutMapDiv").style.display = "block";
+            document.getElementById("vendor6").style.transform="none";
+            document.getElementById("vendor6").src=layoutIdea;
+            document.getElementById("socialFooter").style.display = "none";
+        }
+         
+    } else if (button == "genSpecs") {
+        displayMap();
+        callBrochure(genSpecs, button);
+        document.getElementById("largeMapView").style.display = "block";
+        document.getElementById("mapLinkView").href=genSpecs;
+        if((selection=="BTO" || selection=="SBF" || selection=="OBF" || selection=="ROF") && isMay19OnwardDt == "Y") {
+            document.getElementById("genSpecLightDiv").style.display = "block";
+            document.getElementById("genSpecLboxUrl").click();
+        }else{
+            document.getElementById("genSpecMapDiv").style.display = "block";
+            document.getElementById("vendor7").style.transform="none";
+            document.getElementById("vendor7").src=genSpecs;
+            document.getElementById("socialFooter").style.display = "none";
+        }
+         
+    } else if (button == "addMap") {
+        displayMap();
+        document.getElementById("largeMapView").style.display = "block";
+        document.getElementById("mapLinkView").href=addMap;
+        callBrochure(addMap, button);
+        document.getElementById("addMapMapDiv").style.display = "block";
+        document.getElementById("vendor8").style.transform="none";
+        document.getElementById("vendor8").src=addMap;
+        document.getElementById("socialFooter").style.display = "none";
+         
+    } else if (button == "floorPlan") {
+        displayMap();
+        callBrochure(floorPlan, button);
+        document.getElementById("socialFooter").style.display = "none";
+         
+    } else if (button == "rp") {
+        displayMap();
+        callBrochure(rp, button);
+        document.getElementById("socialFooter").style.display = "none";
+         
+    } else if (button == "3DMODEL") {
+       displayMap();
+        viewSite(button);
+    
+    } else if (button == "OCS") {
+      displayMap();
+       viewSite(button);
+    } else if (button == "downloadPDF") {
+       //callBrochure(downloadPDF, button);
+       var windowWidth = (screen.width)?(screen.width-200):900;
+       var windowHeight = (screen.height)?(screen.height-200):600;
+       leftPosition = (screen.width)?(screen.width-windowWidth)/2:0;
+       topPosition = (screen.height)?(screen.height-windowHeight)/2:0;
+       window.open(downloadPDF, 'pdfDownload', 'top='+topPosition+', left='+leftPosition+', width='+windowWidth+'px, height='+windowHeight+'px, scrollbars=yes,resizable=yes');
+       
+    }
+}
+
+// This method is used to call the brochure link using ajax call and render the brochure page into our page. 
+function callBrochure(url, button){
+    /*if( button == "townMap" ) {
+        document.getElementById("socialFooter").style.display = "inline";
+    } */
+    var unitNoRP = "";
+    var compiledUnits = "";
+    var ballot = "201909";
+    if(url.length>0){
+        if( (selection=="SBF" || selection=="ROF" || selection=="OBF") && button == "townMap") {
+            //displayMap();
+            document.getElementById("rp").style.display = "none";
+            document.getElementById("floorPlan").style.display = "none";
+            document.getElementById("otherMaps").style.display = "none";
+            document.getElementById("sbfTownMap").style.display = "block";
+            document.getElementById("sbfTownImg").style.cssText = document.getElementById("sbfTownImg").style.cssText + "max-width: none !important"; 
+            document.getElementById("socialFooter").style.display = "inline";
+        } else if ( (selection=="SBF" || selection=="ROF" || selection=="OBF") && button == "floorPlan") {
+            if(ballot != "201511") {
+                if(!isFloorLoaded) {
+                  var wrapper = document.getElementById("floorplan-units");
+                  wrapper.innerHTML = compiledUnits;
+                  isFloorLoaded =true;
+                }
+            }
+            document.getElementById("rp").style.display = "none";
+            document.getElementById("sbfTownMap").style.display = "none";
+            document.getElementById("otherMaps").style.display = "none";
+            document.getElementById("floorPlan").style.display = "block";
+        } else if ((selection=="SBF" || selection=="ROF" || selection=="OBF") && button == "rp") {
+            if(!isRpLoaded) {
+                if(ballot == "201511") {
+                  loadRPXML();
+                } else {
+                    var a = document.getElementById('isMsg');
+                    var unitNoList = document.getElementById('displayUnitNo');
+                    a.innerHTML = "Please click on the unit number to view the photographs.";
+                    unitNoList.innerHTML=unitNoRP;
+               }
+                isRpLoaded = true;
+            } 
+            document.getElementById("floorPlan").style.display = "none";
+            document.getElementById("sbfTownMap").style.display = "none";
+            document.getElementById("otherMaps").style.display = "none";
+            document.getElementById("rp").style.display = "block";
+        } else {
+            document.getElementById("rp").style.display = "none";
+            document.getElementById("floorPlan").style.display = "none";
+            document.getElementById("sbfTownMap").style.display = "none";
+            //document.getElementById("otherMaps").style.display = "block";
+            //document.getElementById("vendor").style.transform="none";
+            //document.getElementById("vendor").src=url;
+            
+        } 
+    } else {
+        displayMap();
+        document.getElementById("floorPlan").style.display = "none";
+        document.getElementById("sbfTownMap").style.display = "none";
+        document.getElementById("otherMaps").style.display = "none";
+        document.getElementById("rp").style.display = "none";
+        alert("Unable to find the brochure link.");
+        
+    }
+    document.getElementById("3dModel").style.display = "none";
+    document.getElementById("optional").style.display = "none"; 
+}
+function viewSite(button) {
+     var ballot = "201909";
+     var isN6C12Html = "";
+     var isN6C13Html = "";
+     var ngContract = "s4c15";
+     document.getElementById("otherMaps").style.display = "none";
+    
+    if (button=="3DMODEL") {
+        document.getElementById("3dModel").style.display = "block";
+        
+        if(ballot == "201802") {
+            if(ngContract == "N8C1") {
+               document.getElementById("3dModel").innerHTML='<embed type="text/html" width="460" height="730" src="vendor_SERS/BP13P3DPhotoN8C1_SER.jsp"></embed>';
+            } else if(ngContract == "N4C12") {
+               document.getElementById("3dModel").innerHTML='<embed type="text/html" width="460" height="730" src="vendor_SERS/BP13P3DPhotoN4C12_SER.jsp"></embed>';
+            }
+        } else {
+             document.getElementById("3dModel").innerHTML='<object type="text/html" width="460" height="730" src="BP13P3DPhoto_SER.jsp"></object>';
+        } 
+        document.getElementById("optional").style.display = "none";
+        
+    } else if (button=="OCS") {
+        document.getElementById("optional").style.display = "block";
+        //document.getElementById("optional").innerHTML= '<object type="text/html" width="450" height="730" data="BP13POCS_SER.jsp"></object>';
+        if(ballot == "201802") {
+            if(ngContract == "N8C1") {
+               document.getElementById("optional").innerHTML= '<embed id="objN6C12" type="text/html" width="450" height="1000" src="vendor_SERS/BP13POCS_CL_N8C1.jsp"></embed>';
+            } else if(ngContract == "N4C12") {
+               document.getElementById("optional").innerHTML= '<embed id="objN6C12" type="text/html" width="450" height="1000" src="vendor_SERS/BP13POCS_CL_N4C12.jsp"></embed>';
+            } 
+        }
+        
+        document.getElementById("3dModel").style.display = "none";
+    } 
+}
+//This method only used for Multiple Radio button SBF
+
+function bookMarkCheck(param, id) {
+    /* var strBookMark = ""; */
+    if(param.length > 0) {
+        var splitParam = param.split(" ");
+        
+        var isBookMarked = document.getElementById(id+"bk").style.display;
+        if(currentAction.length > 0 && bmUnits.indexOf(id) != -1) {
+            if(isBookMarked == "none") {
+              currentAction = "Bookmark";
+            } else if (isBookMarked == "inline") {
+              currentAction = "Un-Bookmark";
+            }
+            doBookMark(splitParam[0],splitParam[1],splitParam[2],splitParam[3],currentAction, id);
+        } else {
+            if(isBookMarked == "none") {
+              currentAction = "Bookmark";
+            } else if (isBookMarked == "inline") {
+              currentAction = "Un-Bookmark";
+            }
+            doBookMark(splitParam[0],splitParam[1],splitParam[2],splitParam[3],currentAction, id);
+        }
+        
+        if(bmUnits.length == 0) {
+            bmUnits = id;
+        } else if(bmUnits.indexOf(id) == -1){
+            bmUnits = bmUnits + "," + id;
+        }
+    }
+}
+function displayRpImges(mapLink, blk,unitVal,newTown,selection) {
+
+    //var testlink = "";
+     var testlink = mapLink;
+     if(serverName != "intranet-appdev.hdb.gov.sg" && serverName != "intranet-app.hdb.gov.sg") {
+         if(spinsHost.indexOf("http://") > -1) {
+           spinsHost = spinsHost.replace("http", "https");  
+         }
+     }
+    $.ajax({type: 'POST',
+    url: spinsHost + '/webapp/BP13AWFlatAvail/BP13EBSRPImages',
+    data: {block:blk, unit:unitVal,town:newTown,link:testlink,sel:selection}, 
+    success: function (outputData) {
+      if(outputData != "") {
+         if(userAgent.indexOf("wv") > -1) {
+            if(testlink.indexOf("http://") > -1) {
+              testlink = testlink.replace("http", "https"); 
+          }
+         if(testlink.indexOf("esales.hdb.gov.sg") > -1) {
+            testlink = testlink.replace("esales","www20");
+          } /* else if(testlink.indexOf("wwwuat.nicehomes.com.sg") > -1) { // This condition only for testing
+            testlink = testlink.replace("wwwuat.nicehomes.com.sg","www20.hdb.gov.sg");
+         }  */
+       }
+         
+        
+       onChangeRPImgNew(testlink,outputData,selection);
+         
+       } else {
+          alert("There's no RP images for this unit");
+       }
+    },
+    error : function(){
+                       alert("There's no RP images for this unit");
+                      }, 
+    async: false}); 
+}
+function doBookMark(level, unit, sP, flrArea, currAction, id){
+    //alert("level:"+level);alert("unit:"+unit);alert("sP:"+sP);alert("flrArea:"+flrArea);alert("currAction:"+currAction);
+    if(spinsHost.indexOf("http://") > -1) {
+       spinsHost = spinsHost.replace("http", "https");  
+    }
+    $.ajax({type: 'POST', 
+        url: spinsHost + '/webapp/BP13AWFlatAvail/BP13EBMyBookMark', 
+        data: {action: currAction, levelInput:level, unitInput: unit, spInput: sP, flrAreaInput: flrArea, "" : getCurrBookMarkCookie()}, 
+        success: function (outputData) {
+                    if(outputData == ""){
+                        sessionExpired();
+                    }else if(outputData == ""){
+                        window.location.href = "/webapp/BP13AWFlatAvail/BP13EBSFlatSearch?returnVal=Yes&BonusFlats1=" + "";
+                    }else{  
+                        if(outputData.length > 10){
+                            alert(outputData);                          
+                        }else{
+                            setCurrBookMarkCookie();    
+                            var isBookMarked = document.getElementById(id+"bk").style.display;
+                            if(isBookMarked == "none") {
+                                alert('Unit (' + outputData + ') successfully bookmarked.');
+                                document.getElementById(id+"bk").style.display="inline";
+                                document.getElementById(id+"bk").style.backgroundColor = "#FDC68A";                         
+                                
+                                var title = document.getElementById(id+"k").title;
+                                title = title.replace("Bookmark","Un-Bookmark");
+                                document.getElementById(id+"k").title = title;
+                                document.getElementById(id+"k").innerHTML=title +"<span class='nub'></span>";
+                            
+                            } else if (isBookMarked == "inline") {
+                            
+                                 alert('Unit (' + outputData + ') successfully un-bookmarked.');
+                                 document.getElementById(id+"bk").style.display="none";
+                                
+                                var title = document.getElementById(id+"k").title;
+                                title = title.replace("Un-Bookmark","Bookmark");
+                                document.getElementById(id+"k").title = title;
+                                document.getElementById(id+"k").innerHTML=title +"<span class='nub'></span>";
+                            }
+                            
+                            
+                            /*if(currAction.toLocaleLowerCase() == ''.toLocaleLowerCase()){
+                                currentAction = "Un-Bookmark";
+                                alert('Unit (' + outputData + ') successfully bookmarked.');
+                                document.getElementById(id+"bk").style.display="inline";
+                                document.getElementById(id+"bk").style.backgroundColor = "#FDC68A";                         
+                                //document.getElementById(id).innerHTML = document.getElementById(id).value + "+";
+                                
+                                var title = document.getElementById(id).title;
+                                title = title.replace("Bookmark","Un-Bookmark");
+                                document.getElementById(id).title = title;
+                                
+                            }else{
+                                 currentAction = "Bookmark";
+                                 alert('Unit (' + outputData + ') successfully un-bookmarked.');
+                                 document.getElementById(id+"bk").style.display="none";
+                                
+                                //value = value.replaceAll("+","");
+                                //document.getElementById(id).value = value;
+                                //document.getElementById(id).innerHTML = "";
+                                
+                                
+                                var title = document.getElementById(id).title;
+                                title = title.replace("Un-Bookmark","Bookmark");
+                                document.getElementById(id).title = title;
+                                
+                            }*/
+
+                            //document.getElementById(id).innerHTML = "<div onclick='return doBookMark(\""+level+"\",\""+unit+"\",\""+id+"\",\""+rmrkTag+"\",\""+sP+"\",\""+flrArea+"\",\""+nextAction+"\",\""+currAction+"\")' onmouseover='return changeStyleOverDefault2(this);' onmouseout='return changeStyleOutDefault2(this);' style='text-decoration:none;'>" + nextAction + "</div>";
+                        }
+                    }
+                 },
+        error : function(){
+                    alert('Service unavailable. Please contact admnistrator!');
+                }, 
+        async: false}); 
+    
+    return false;
+}
+
+
+
+function openSocial() {
+window.open("https://esales.hdb.gov.sg/common/OneMap.html?open&keyVal=1.4172581|103.9127362&zoomLevel=6&keyType=LL84");
+}
+</script>
+
+
+</head>
+<body>
+
+<!-- Page Title and Description -->
+<div class="title-section" id="main">
+<div class="row fit-padding-bottom">
+    <div class="large-12 columns e-subheader">
+        <h2>Flat Details and Availability</h2>
+        <!-- <hr> -->
+    </div>
+</div>
+</div>
+<br/> 
+<form id="flatSummary" action="BP13EBSFlatSearch" method="get">
+<!-- This is to provide the link to navigate to SBF or BTO -->
+
+<div class="row form-row">
+    
+    <div class="large-12 small-12 columns">
+        <h3></h3>   
+    </div>
+</div>
+
+
+<!-- This is to provide the link to navigate to ROF -->
+
+
+<!-- This is to load the town list for the specific ballotQtr  -->
+<div class="row form-row">
+    <div class="large-1 columns" style="text-align:left;font-size:12px;" > 
+        Town
+    </div>
+    <div class="large-2 columns"> 
+        <select id="Town" name="Town" style="font-size:12px;" onchange="callTownSearch(this.value)">
+            
+                
+                    
+                            
+                            
+                                 
+                                
+                                    <option value="Punggol" selected>Punggol</option>
+                                    
+                                        
+                                                
+                            
+                            
+                                    
+                                
+                                         
+                                           <option value="Tampines">Tampines</option>
+                                        
+                                        
+                                                
+                        
+                    
+                
+                
+        </select>
+    </div> 
+    <!-- filler -->
+    <div class="large-9 columns">&nbsp;</div>
+</div>
+<input type="hidden" id="Flat_Type" name="Flat_Type" value="BTO">
+<input type="hidden" id="selectedTown" name="selectedTown" value="Punggol">
+<!-- To add an empty row -->
+<div class="row form-row"></div>
+<!-- <div class="row form-row">
+    <div class="small-3 columns" style="position: absolute; left: 300px; top: 75px;">
+        <a href="#" class="button expand secondary radius" onclick="return showBookMarkLogIn();">Sign in to&#13;&#10;'My Bookmarks'</a>
+    </div>
+</div> -->
+
+<div class="row form-row" style="border:1px solid black;max-width: 980px;">
+<div class="large-6 columns" style="">
+<!-- This is to display the block details -->
+<div id="flatDetails" class="row form-row">
+    <div class="row form-row">
+        <!-- <img id="flatAvailImg" src="/webapp/BP13AWFlatAvail/images/flatAvailImg.jpg"/> -->
+        <h5>Flat Details &amp; Availability</h5>
+    </div>
+    
+    <!-- loading Bookmark-->
+    
+        
+            
+            
+                 
+                
+                <div class="row form-row" style="text-align:right;">
+                    <!-- filler -->
+                    <!-- <div class="small-6 columns"></div> -->
+                    
+                    <div class="large-12 columns" style="font-size:11px; text-align: right;">
+                    <input type="button" value="Sign in to&#13;&#10;'My Bookmarks'" onclick="return showBookMarkLogIn();"/>
+                    <!-- <a href="#" class="button expand radius secondary small" onclick="return showBookMarkLogIn();">Sign in to&#13;&#10;'My Bookmarks'</a> -->
+                    </div>
+                </div>
+                
+                <div id="bookMarkIntro" class="row form-row" style="text-align:center; color:#000000; font-size:10px; background:#FDC68A; display:none;">
+                    <p>
+                        <b>The 'My Bookmarks' e-Service is open to shortlisted applicants under the Public Scheme with a scheduled appointment date.</b>
+                    </p>
+                    <p>
+                        Sign in to this e-Service to track the availability of the units you are interested in. 
+                        You may want to consider widening your choice of units if those you bookmarked are no 
+                        longer available.<!--  This e-Service will only be available to applicants under the Public 
+                        Scheme from the Sep 2013 Build-To-Order (BTO) exercise onwards. -->
+                    </p>
+                    <p>
+                        <b>Sign in to 'My Bookmarks' with your SingPass to start using this e-Service.</b>
+                    </p>
+                    <p style="color: blue; text-decoration: underline; font-weight: bold;">
+                        <b>
+                            <span style="padding-right: 20px;" onclick="return proceedToLogin('Punggol','5-Room','A','201909');" onmouseover="return changeStyleOverDefault(this);" onmouseout="return changeStyleOutDefault(this);">
+                                SIGN IN
+                            </span>
+                            <span onclick="return hideMyBookMarkInfo('bookMarkIntro');" onmouseover="return changeStyleOverDefault(this);" onmouseout="return changeStyleOutDefault(this);">
+                                CLOSE
+                            </span>
+                        </b>
+                    </p>
+                </div>
+            
+            
+            
+        
+    
+    
+    <!-- loading Flat Type list-->
+    <div class="row form-row">
+        <!-- Loading Flat Type -->
+        <div class="large-3 columns" style="font-size:12px;">
+            Flat Type
+        </div>
+        <div class="large-9 columns">
+            <select id="Flat" name="Flat" style="font-size:12px;">
+                
+                    
+                        
+                        
+                            <option value="2-Room Flexi (Short Lease/99-Year Lease)">2-Room Flexi (Short Lease/99-Year Lease)</option>
+                                                
+                    
+                        
+                        
+                            <option value="3-Room (income ceiling $7,000)">3-Room (income ceiling $7,000)</option>
+                                                
+                    
+                        
+                        
+                            <option value="4-Room">4-Room</option>
+                                                
+                    
+                        
+                            <option value="5-Room" selected>5-Room</option>
+                        
+                                                
+                     
+                    
+            </select>
+        </div>
+    </div>
+    
+    <div class="row form-row">
+        <!-- loading Ethnic Group list-->
+        <div class="large-3 columns" style="font-size:12px;">
+            Ethnic&nbsp;Group
+        </div>
+        <div class="large-3 columns">
+            <select id="ethnic" name="ethnic" style="font-size:12px;">
+                
+                    
+                        
+                            <option value="Y" selected>All Ethnic</option>  
+                        
+                                                    
+                    
+                        
+                        
+                            <option value="M">Malay</option>
+                                                    
+                    
+                        
+                        
+                            <option value="C">Chinese</option>
+                                                    
+                    
+                        
+                        
+                            <option value="O">Indian/Others</option>
+                                                    
+                    
+                    
+            </select>
+        </div>
+        <!-- Loading Flat Availability list-->
+        
+            <div class="large-3 columns" style="font-size:12px;">
+                Flat&nbsp;Availability
+            </div>
+            <div class="large-3 columns">
+                <select id="ViewOption" name="ViewOption" style="font-size:12px;">
+                    
+                        
+                            
+                                <option value="A" selected>Any</option>
+                            
+                                                            
+                        
+                            
+                            
+                                <option value="2">Booked</option>
+                                                            
+                        
+                            
+                            
+                                <option value="1">Not Booked</option>
+                                                            
+                        
+                        
+                </select>
+            </div>
+        
+        
+        
+    </div>
+    
+    
+    <div class="row form-row">
+        <!-- Loading Project list for BTO-->
+        
+            <!-- <div class="small-1 columns">&nbsp;</div> -->
+            <div class="large-3 columns" style="font-size:12px;">
+            Project&nbsp;Name
+            </div>
+            <div class="large-5 columns">
+                <select id="projName" name="projName" style="font-size:12px;">
+                    <option value="A" >Any</option>
+                    
+                        
+                                    
+                            
+                                <option value="S4;C11">Punggol Point Crown</option>
+                                                    
+                        
+                                    
+                            
+                                <option value="S4;C15">Punggol Point Cove</option>
+                                                    
+                        
+                        
+                </select>
+            </div>  
+        
+        <!-- Loading Project list for SER-->
+        
+        
+        <!-- filler -->
+        
+        
+        <!-- load search button -->
+        <div class="large-4 columns" style="font-size:11px; text-align: right;">
+            <input type="button" id="searchButtonId" value="Search" onclick="checkBlkSearch(this.id)"/>
+        </div>  
+    </div>
+    
+    
+    <!-- load search button -->
+    <!-- <div class="row form-row">
+        <div class="large-12 columns" style="font-size:11px; text-align: right;">
+            <input type="button" value="Search" onclick="checkBlkSearch()"/>
+        </div>
+    </div> -->
+        
+    <!-- This is to load the block details -->
+    <div class="row form-row" id="blockDetails" style="height:450; width: 430; font-size:12px;">
+        
+        
+            <!-- This is to load the blocks for the search criteria -->
+            <div class="row form-row">
+                <!-- This is to open a popup window to display the search criteria-->
+                
+                    <a href="javascript:openPopup()">&nbsp;Find the cheapest available unit based on your search criteria (Not Booked)?</a>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="font-size:11px; text-align:left; width:1000px;" colspan="6">Click on block no. to view availability and maps/plans</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        
+                            
+                            
+                            <tr>
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('436A','S4','C11');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="Northshore Dr">
+                                                        
+                                                            <a><font color="#000099">436A</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('436B','S4','C11');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="Northshore Dr">
+                                                        
+                                                            <a><font color="#000099">436B</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('437A','S4','C11');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="Northshore Dr">
+                                                        
+                                                            <a><font color="#000099">437A</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('437B','S4','C11');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="Northshore Dr">
+                                                        
+                                                            <a><font color="#000099">437B</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('442A','S4','C15');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="New Punggol Rd">
+                                                        
+                                                            <a><font color="#000099">442A</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('443A','S4','C15');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="New Punggol Rd">
+                                                        
+                                                            <a><font color="#000099">443A</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                            </tr>
+                        
+                            
+                            
+                            <tr>
+                                
+                                    
+                                        
+                                            <td style="font-size:12px; text-align:center; background-color:#fffac2">
+                                                <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="New Punggol Rd">
+                                                    
+                                                        <font color="#000099">445A</font>
+                                                    
+                                                    
+                                                </font>
+                                            </td>
+                                        
+                                        
+                                    
+                                
+                                    
+                                        
+                                        
+                                            <td style="font-size:12px; text-align:center;">
+                                                <div onclick="checkBlk('445B','S4','C15');"> 
+                                                    <font data-tooltip="" data-width="200" class="e-more-info has-tip tip-bottom" title="New Punggol Rd">
+                                                        
+                                                            <a><font color="#000099">445B</font></a>
+                                                        
+                                                        
+                                                    </font>
+                                                </div>
+                                            </td>
+                                        
+                                    
+                                
+                            </tr>
+                        
+                            
+                            
+                            <tr>
+                                
+                            </tr>
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- This is to display the selected block information -->
+            
+                <div class="row form-row" style="font-size:12px; text-align:left;">
+                    <div class="large-2 columns" style="border:1px solid black; background-color: #707070; color:white;">
+                        <b>Block</b>
+                    </div>
+                    <div class="large-3 columns" style="border:1px solid black;">
+                        445A&nbsp;
+                    </div>
+                    <div class="large-2 columns" style="border:1px solid black; background-color: #707070; color:white;">
+                        <b>Street</b>
+                    </div>
+                    <div class="large-5 columns" style="border:1px solid black;">
+                        NEW PUNGGOL RD&nbsp;
+                    </div>
+                </div>
+                
+                
+                
+                <div class="row form-row" style="font-size:12px; text-align:left;">
+                    <div class="large-5 columns" style="border:1px solid black; background-color: #707070; color:white;">
+                        <b>Delivery&nbsp;Possession&nbsp;Date</b>
+                    </div>
+                    <div class="large-7 columns" style="border:1px solid black;">
+                        30 Nov 2024 (Estimated)&nbsp;
+                    </div>
+                </div>
+                
+                    
+                
+                
+                <div class="row form-row" style="font-size:12px; text-align:left;">
+                    <div class="large-5 columns" style="border:1px solid black; background-color: #707070; color:white;">
+                        <b>Estimated&nbsp;Completion&nbsp;Date</b>
+                    </div>
+                    <div class="large-7 columns" style="border:1px solid black;">
+                        30 Nov 2023&nbsp;
+                    </div>
+                </div>
+                
+                
+                <div class="row form-row" style="font-size:12px; text-align:left;">
+                    <div class="large-5 columns" style="border:1px solid black; background-color: #707070; color:white;" >
+                        <b>Available&nbsp;Ethnic&nbsp;Quota
+                        &nbsp;
+                        </b>
+                    </div>
+                    <div class="large-7 columns" style="border:1px solid black;">
+                        Malay-10, Chinese-38, Indian/ Other Races-5&nbsp;
+                    </div>
+                </div>
+                
+                     
+                
+                 
+                
+                <!-- This is to load the unit details available for the selected block -->
+                
+                    <div class="row form-row">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="font-size:12px; text-align:left; width:1000px;" colspan="6">
+                                    
+                                    
+                                        Mouseover&nbsp;unit&nbsp;number&nbsp;for&nbsp;selling&nbsp;price&nbsp;and&nbsp;gross&nbsp;floor&nbsp;area
+                                    
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#02-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$440,700<br/>____________________<br/>113&nbsp;Sqm" id="#02-706">
+                                                        <a><font color="#000099">#02-706</font>
+                                                        <font color="#000099" id="#02-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#03-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$448,100<br/>____________________<br/>113&nbsp;Sqm" id="#03-706">
+                                                        <a><font color="#000099">#03-706</font>
+                                                        <font color="#000099" id="#03-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#04-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$460,400<br/>____________________<br/>113&nbsp;Sqm" id="#04-706">
+                                                        <a><font color="#000099">#04-706</font>
+                                                        <font color="#000099" id="#04-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#05-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$472,700<br/>____________________<br/>113&nbsp;Sqm" id="#05-706">
+                                                        <a><font color="#000099">#05-706</font>
+                                                        <font color="#000099" id="#05-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#06-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$477,600<br/>____________________<br/>113&nbsp;Sqm" id="#06-706">
+                                                        <a><font color="#000099">#06-706</font>
+                                                        <font color="#000099" id="#06-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#07-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$482,500<br/>____________________<br/>113&nbsp;Sqm" id="#07-706">
+                                                        <a><font color="#000099">#07-706</font>
+                                                        <font color="#000099" id="#07-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#08-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$487,400<br/>____________________<br/>113&nbsp;Sqm" id="#08-706">
+                                                        <a><font color="#000099">#08-706</font>
+                                                        <font color="#000099" id="#08-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#09-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$489,400<br/>____________________<br/>113&nbsp;Sqm" id="#09-706">
+                                                        <a><font color="#000099">#09-706</font>
+                                                        <font color="#000099" id="#09-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#10-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$496,300<br/>____________________<br/>113&nbsp;Sqm" id="#10-706">
+                                                        <a><font color="#000099">#10-706</font>
+                                                        <font color="#000099" id="#10-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#11-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$493,400<br/>____________________<br/>113&nbsp;Sqm" id="#11-706">
+                                                        <a><font color="#000099">#11-706</font>
+                                                        <font color="#000099" id="#11-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#12-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$495,400<br/>____________________<br/>113&nbsp;Sqm" id="#12-706">
+                                                        <a><font color="#000099">#12-706</font>
+                                                        <font color="#000099" id="#12-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#13-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$497,400<br/>____________________<br/>113&nbsp;Sqm" id="#13-706">
+                                                        <a><font color="#000099">#13-706</font>
+                                                        <font color="#000099" id="#13-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#14-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$499,400<br/>____________________<br/>113&nbsp;Sqm" id="#14-706">
+                                                        <a><font color="#000099">#14-706</font>
+                                                        <font color="#000099" id="#14-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#15-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$501,400<br/>____________________<br/>113&nbsp;Sqm" id="#15-706">
+                                                        <a><font color="#000099">#15-706</font>
+                                                        <font color="#000099" id="#15-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#16-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$503,400<br/>____________________<br/>113&nbsp;Sqm" id="#16-706">
+                                                        <a><font color="#000099">#16-706</font>
+                                                        <font color="#000099" id="#16-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#17-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$505,400<br/>____________________<br/>113&nbsp;Sqm" id="#17-706">
+                                                        <a><font color="#000099">#17-706</font>
+                                                        <font color="#000099" id="#17-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#18-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$507,400<br/>____________________<br/>113&nbsp;Sqm" id="#18-706">
+                                                        <a><font color="#000099">#18-706</font>
+                                                        <font color="#000099" id="#18-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#19-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$509,400<br/>____________________<br/>113&nbsp;Sqm" id="#19-706">
+                                                        <a><font color="#000099">#19-706</font>
+                                                        <font color="#000099" id="#19-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#20-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$511,400<br/>____________________<br/>113&nbsp;Sqm" id="#20-706">
+                                                        <a><font color="#000099">#20-706</font>
+                                                        <font color="#000099" id="#20-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#21-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$518,300<br/>____________________<br/>113&nbsp;Sqm" id="#21-706">
+                                                        <a><font color="#000099">#21-706</font>
+                                                        <font color="#000099" id="#21-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#22-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$525,200<br/>____________________<br/>113&nbsp;Sqm" id="#22-706">
+                                                        <a><font color="#000099">#22-706</font>
+                                                        <font color="#000099" id="#22-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#23-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$522,300<br/>____________________<br/>113&nbsp;Sqm" id="#23-706">
+                                                        <a><font color="#000099">#23-706</font>
+                                                        <font color="#000099" id="#23-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#24-706')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$522,300<br/>____________________<br/>113&nbsp;Sqm" id="#24-706">
+                                                        <a><font color="#000099">#24-706</font>
+                                                        <font color="#000099" id="#24-706bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#03-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$448,100<br/>____________________<br/>113&nbsp;Sqm" id="#03-708">
+                                                        <a><font color="#000099">#03-708</font>
+                                                        <font color="#000099" id="#03-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#04-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$460,400<br/>____________________<br/>113&nbsp;Sqm" id="#04-708">
+                                                        <a><font color="#000099">#04-708</font>
+                                                        <font color="#000099" id="#04-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#05-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$472,700<br/>____________________<br/>113&nbsp;Sqm" id="#05-708">
+                                                        <a><font color="#000099">#05-708</font>
+                                                        <font color="#000099" id="#05-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#06-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$477,600<br/>____________________<br/>113&nbsp;Sqm" id="#06-708">
+                                                        <a><font color="#000099">#06-708</font>
+                                                        <font color="#000099" id="#06-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#07-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$482,500<br/>____________________<br/>113&nbsp;Sqm" id="#07-708">
+                                                        <a><font color="#000099">#07-708</font>
+                                                        <font color="#000099" id="#07-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#08-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$487,400<br/>____________________<br/>113&nbsp;Sqm" id="#08-708">
+                                                        <a><font color="#000099">#08-708</font>
+                                                        <font color="#000099" id="#08-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#09-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$489,400<br/>____________________<br/>113&nbsp;Sqm" id="#09-708">
+                                                        <a><font color="#000099">#09-708</font>
+                                                        <font color="#000099" id="#09-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#10-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$496,300<br/>____________________<br/>113&nbsp;Sqm" id="#10-708">
+                                                        <a><font color="#000099">#10-708</font>
+                                                        <font color="#000099" id="#10-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#11-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$493,400<br/>____________________<br/>113&nbsp;Sqm" id="#11-708">
+                                                        <a><font color="#000099">#11-708</font>
+                                                        <font color="#000099" id="#11-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#12-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$495,400<br/>____________________<br/>113&nbsp;Sqm" id="#12-708">
+                                                        <a><font color="#000099">#12-708</font>
+                                                        <font color="#000099" id="#12-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#13-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$497,400<br/>____________________<br/>113&nbsp;Sqm" id="#13-708">
+                                                        <a><font color="#000099">#13-708</font>
+                                                        <font color="#000099" id="#13-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#14-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$499,400<br/>____________________<br/>113&nbsp;Sqm" id="#14-708">
+                                                        <a><font color="#000099">#14-708</font>
+                                                        <font color="#000099" id="#14-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#15-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$501,400<br/>____________________<br/>113&nbsp;Sqm" id="#15-708">
+                                                        <a><font color="#000099">#15-708</font>
+                                                        <font color="#000099" id="#15-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#16-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$503,400<br/>____________________<br/>113&nbsp;Sqm" id="#16-708">
+                                                        <a><font color="#000099">#16-708</font>
+                                                        <font color="#000099" id="#16-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#17-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$505,400<br/>____________________<br/>113&nbsp;Sqm" id="#17-708">
+                                                        <a><font color="#000099">#17-708</font>
+                                                        <font color="#000099" id="#17-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#18-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$507,400<br/>____________________<br/>113&nbsp;Sqm" id="#18-708">
+                                                        <a><font color="#000099">#18-708</font>
+                                                        <font color="#000099" id="#18-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#19-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$509,400<br/>____________________<br/>113&nbsp;Sqm" id="#19-708">
+                                                        <a><font color="#000099">#19-708</font>
+                                                        <font color="#000099" id="#19-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#20-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$511,400<br/>____________________<br/>113&nbsp;Sqm" id="#20-708">
+                                                        <a><font color="#000099">#20-708</font>
+                                                        <font color="#000099" id="#20-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#21-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$518,300<br/>____________________<br/>113&nbsp;Sqm" id="#21-708">
+                                                        <a><font color="#000099">#21-708</font>
+                                                        <font color="#000099" id="#21-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#22-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$525,200<br/>____________________<br/>113&nbsp;Sqm" id="#22-708">
+                                                        <a><font color="#000099">#22-708</font>
+                                                        <font color="#000099" id="#22-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#23-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$522,300<br/>____________________<br/>113&nbsp;Sqm" id="#23-708">
+                                                        <a><font color="#000099">#23-708</font>
+                                                        <font color="#000099" id="#23-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                            <td style="font-size:12px; text-align:center;" onclick="bookMarkCheck('','#24-708')">
+                                                 
+                                                    
+                                                    <font data-tooltip="" data-width="150" class="e-more-info has-tip tip-bottom" title="$522,300<br/>____________________<br/>113&nbsp;Sqm" id="#24-708">
+                                                        <a><font color="#000099">#24-708</font>
+                                                        <font color="#000099" id="#24-708bk" style="display:none;">+</font></a>
+                                                    </font>
+                                                
+                                                
+                                            </td>
+                                        
+                                    </tr>
+                                
+                                    
+                                    
+                                    <tr>
+                                        
+                                    </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                
+            
+        
+        <!-- This is to display the error message when the search criteria is unavailable -->
+        
+        
+        
+        
+         
+        
+        <div class="row form-row" style="font-size:12px; text-align:left;">
+            <div class="large-12 columns">
+                <font color="#000099"><strong>Blue</strong></font>
+                
+                    <font>indicates unit is available for selection &nbsp;|&nbsp;</font>
+                    <font color="#cc0000"><strong>Red</strong> </font>
+                    <font>indicates unit has been booked</font>
+                
+                
+                
+                
+            </div>
+        </div>
+        
+        <div class="row form-row" style="font-size:12px; text-align:left;">
+            <div class="large-12 columns">
+                The ethnic quota is updated as and when a booking is made.
+            </div>
+        </div>
+        
+         <div class="row form-row" style="font-size:12px; text-align:left;display:none;" id="2RoomFlexiFooter">
+            
+            <div class="large-12 columns">
+                <font style="text-decoration: underline">Two-room Flexi Flats on 99-Year Leases</font>
+                <ol>
+                     <li style="font-size: 12px;">First-timer applicants under the Single Singapore Citizen (SSC) Scheme and Non-Citizen Spouse (NCS) Scheme, with average gross monthly income of not more than $6,000, need to pay $15,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer Singapore Citizen/ Singapore Permanent Resident (SC/ SPR) households need to pay $10,000 premium in addition to the flat price. An SC/ SPR household is one where the applicant is an SC and the other family members listed in the flat application are SPRs.</li>
+                </ol>     
+                     <font style="text-decoration: underline">Two-room Flexi Flats on 15- to 45-Year Leases (for offer only to elderly aged 55 and above)</font>
+                 <ol>   
+                     <li style="font-size: 12px;">First-timer applicants under the Single Singapore Citizen (SSC) Scheme and Non-Citizen Spouse (NCS) Scheme, with average gross monthly income of not more than $6,000, need to pay $15,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer applicants under the Singles Singapore Citizen (SSC), Non-Citizen Spouse (NCS), or Joint Singles (JS) Scheme, with average gross monthly income of more than $6,000, need to pay $30,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer households who own private property locally or overseas (including those who have disposed of one within 30 months before the date of flat application) need to pay $30,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer Singapore Citizen/ Singapore Permanent Resident (SC/ SPR) households need to pay a $10,000 premium in addition to the flat price. An SC/ SPR household is one where the applicant is an SC and the other family members listed in the flat application are SPRs.</li>
+                     <li style="font-size: 12px;">All additional amounts and premiums will be adjusted according to the lease chosen.</li>
+                </ol>
+            </div>
+            
+            
+        </div>
+        
+        <div class="row form-row" style="font-size:12px; text-align:left;display:none;" id="saFooter">
+            <div class="large-12 columns">
+                <font style="text-decoration: underline">Two-room Flexi Flats on 15- to 45-Year Leases (for offer only to elderly aged 55 and above)</font>
+                <ol>
+                     <li style="font-size: 12px;">First-timer applicants under the Single Singapore Citizen (SSC) Scheme and Non-Citizen Spouse (NCS) Scheme, with average gross monthly income of not more than $6,000, need to pay $15,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer applicants under the Singles Singapore Citizen (SSC), Non-Citizen Spouse (NCS), or Joint Singles (JS) Scheme, with average gross monthly income of more than $6,000, need to pay $30,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer households who own private property locally or overseas (including those who have disposed of one within 30 months before the date of flat application) need to pay $30,000 in addition to the flat price.</li>
+                     <li style="font-size: 12px;">First-timer Singapore Citizen/ Singapore Permanent Resident (SC/ SPR) households need to pay a $10,000 premium in addition to the flat price. An SC/ SPR household is one where the applicant is an SC and the other family members listed in the flat application are SPRs.</li>
+                     <li style="font-size: 12px;">All additional amounts and premiums will be adjusted according to the lease chosen.</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="row form-row" style="font-size:12px; text-align:left;">
+            <!-- <div class="small-1 columns"></div> -->
+            <div class="large-12 columns" style="text-align:right;">
+                <strong>Last Updated on 02 Nov 2019&nbsp;7:45:58 PM </strong>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="large-6 columns">
+<div id="mapDetails">
+    <div class="row form-row">
+        <!-- <img id="flatMapImg" src="/webapp/BP13AWFlatAvail/images/flatMapImg.jpg"/> -->
+        
+        <h5>&nbsp;&nbsp;Maps & Plans</h5>
+        
+        
+        
+    </div>
+    
+    <!-- This is to load the map details -->
+    
+        <!-- This is to load map radio buttons for BTO selection -->
+        
+            <div style="border:1px solid #707070;">
+                 <div class="row" style="font-size:11.3px;">
+                    <div class="large-3 columns">
+                        <input type="radio" name="mapButton"  onclick="callMap('sitePlan')">&nbsp;Site&nbsp;Plan
+                    </div>
+                    <div class="large-3 columns">
+                        <input type="radio" name="mapButton"  onclick="callMap('townMap')">&nbsp;Town&nbsp;Map
+                    </div>
+                    <!-- <div class="large-3 columns">
+                        <input type="radio" name="mapButton"  onclick="callMap('socialFacilities')">&nbsp;Social&nbsp;Facilities~
+                    </div> -->
+                    <div class="large-3 columns">
+                        <input type="radio" name="mapButton"  onclick="callMap('blockPlan')">&nbsp;Block&nbsp;Plan
+                    </div>
+                    <div class="large-3 columns">
+                        <input type="radio" name="mapButton"  onclick="callMap('unitDis')">&nbsp;Unit&nbsp;Distribution
+                    </div>
+                </div>
+                
+                    <div class="row" style="font-size:11.3px;">
+                        <div class="large-5 columns">
+                            <input type="radio" name="mapButton"  onclick="callMap('layoutIdea')">&nbsp;Layout&nbsp;Ideas&nbsp;for&nbsp;Your&nbsp;Home
+                        </div>
+                        <div class="large-4 columns">
+                            <input type="radio" name="mapButton"  onclick="callMap('genSpecs')">&nbsp;General&nbsp;Specifications
+                        </div>
+                        <div class="large-3 columns">&nbsp;</div>
+                        
+                    </div>
+                
+                
+                <!-- <div class="row" style="font-size:11px;">
+                    
+                    <div class="large-8 columns">
+                    </div>
+                </div> -->
+            </div>
+        
+        <!-- This is to load map radio buttons for SBF selection ballot ne '201511' -->
+        
+        
+        
+        <div class="large-12 columns" id="largeMapView" style="font-size:12px; display: none;">
+          Please <a href="#" target="_blank" id="mapLinkView">click here</a>  to see a bigger image&nbsp; 
+        </div>
+        <br/>
+    
+    
+        <div id="3dModel" class="large-12 columns" style="display: none;" >     
+        <!-- <embed type="text/html" width="460" height="730" src="BP13P3DPhoto_SER.jsp" ></embed> -->  
+        </div>
+        <div id="optional" class="row form-row" style="display: none;">
+        <!-- <embed type="text/html" width="450" height="730" src="BP13POCS_SER.jsp"></embed> -->
+        </div>
+            
+    <!-- This is to display the prompt image to notify the user to select the block to view the map details -->
+    
+    <!--  This is to display when there is no map to view-->
+    
+    
+        <div id="sbfTownMap" class="wrapper" style="display: none;">
+            <div id="viewer2" class="viewer"> 
+                <div id="pointer" class="pointer"></div>
+            </div>
+        </div>
+        
+        <div id="otherMaps" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="siteMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor1" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="siteMapLightDiv" class="row" style="display: none;">
+            
+            <div class="siteMapContainer">
+                <div class="siteMapGallery">
+                   
+                        
+                           <a id="sitePlanLboxUrl" href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_SITEPLAN_images_2671/siteplan_pg_s4c15.png" data-lightbox="example-1"></a>
+                        
+                    
+                
+                </div>
+           </div>
+            
+            
+        </div>
+        
+        <div id="townMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor2" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div id="townMapLightDiv" class="row" style="display: none;">
+            
+            <div class="townMapContainer">
+                <div class="townMapGallery">
+                    
+                        
+                            <a id="townMapLboxUrl" href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_TOWNMAP_images_2671/townmap_pg_s4c15.png" data-lightbox="example-2"></a>
+                        
+                    
+                </div>
+            </div>
+        </div>
+        
+        
+        <div id="blockMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor3" class="panzoom" src="" /> 
+                </div>
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        
+             <div id="blockMapLightDiv" class="row" style="display: none;">
+               <div class="blockPlanContainer">
+                   <div class="blockPlanGallery">
+                   
+                      
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_2.png" data-lightbox="example-3" data-title="2nd storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">2nd storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_3_9_15.png" data-lightbox="example-3" data-title="3rd, 9th and 15th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">3rd, 9th and 15th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_4_16.png" data-lightbox="example-3" data-title="4th and 16th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">4th and 16th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_5_11_17.png" data-lightbox="example-3" data-title="5th, 11th and 17th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">5th, 11th and 17th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_6_12_18.png" data-lightbox="example-3" data-title="6th, 12th and 18th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">6th, 12th and 18th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_7_13_19.png" data-lightbox="example-3" data-title="7th, 13th and 19th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">7th, 13th and 19th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_8_14_20.png" data-lightbox="example-3" data-title="8th, 14th and 20th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">8th, 14th and 20th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_10.png" data-lightbox="example-3" data-title="10th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">10th storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_21.png" data-lightbox="example-3" data-title="21st storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">21st storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_22.png" data-lightbox="example-3" data-title="22nd storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">22nd storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_23.png" data-lightbox="example-3" data-title="23rd storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">23rd storey</font>
+                                   </a>
+                              </div>
+                         
+                               <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_BLOCKPLAN_images_2671/blockplan_pg_s4c15_445a_zz_24.png" data-lightbox="example-3" data-title="24th storey">
+                                       <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">24th storey</font>
+                                   </a>
+                              </div>
+                         
+                         <div class="clear"></div>
+                     
+                 </div>
+              </div>
+            </div>
+        
+        
+        
+        
+        
+        <div id="udMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor4" class="panzoom" src="" /> 
+                </div>
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="unitMapLightDiv" class="row" style="display: none;">
+            
+            <div class="unitMapContainer">
+              <div class="unitMapGallery">
+               
+                    
+                     <a id="unitMapLboxUrl" href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_UNITDIS_images_2671/unitdis_pg_s4c15_445a.png" data-lightbox="example-4"></a>
+                    
+                
+              
+            </div>
+          </div>
+            
+            
+        </div>
+        
+        
+        <div id="floorMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor5" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="floorMapLightDiv" class="row" style="display: none;">
+            
+            <div class="floorMapContainer">
+               <div class="floorMapGallery">
+               
+                    
+                     <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_TFP_images_2671/tfp_pg_s4c15.png" data-lightbox="example-5"><img style="border:solid 1px black;width:135px;" src="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_TFP_images_2671/tfp_pg_s4c15.png" alt="image-1"/></a> 
+                    
+                
+            
+            </div>
+         </div>
+            
+            
+        </div>
+    
+        <div id="layoutMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor6" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="layoutMapLightDiv" class="row" style="display: none;">
+            
+            <div class="layoutMapContainer">
+                <div class="layoutMapGallery">
+                  
+                        
+                              <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_LAYOUTIDEAS_images_2671/layoutideas_pg_s4c15_5(1).png" data-lightbox="example-6" data-title="5-room_1">
+                                        <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">5-room_1</font>
+                                   </a>
+                              </div>
+                         
+                              <div class="large-4 medium-4 small-6 columns" style="text-align: center;background-color:#ebebeb;border: 1px white solid;">
+                                   <a href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_LAYOUTIDEAS_images_2671/layoutideas_pg_s4c15_5(2).png" data-lightbox="example-6" data-title="5-room_2">
+                                        <font style="border: none;color: black;text-decoration: none;font-size: 12px;cursor: pointer;padding-left:5px;padding-right:5px;padding-top:2px;padding-top:2px;">5-room_2</font>
+                                   </a>
+                              </div>
+                         
+                         <div class="clear"></div>
+                  
+                </div>
+            </div>
+            
+        </div>
+        
+        <div id="genSpecMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor7" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        <div id="genSpecLightDiv" class="row" style="display: none;">
+            <div class="genSpecContainer">
+                <div class="genSpecGallery">
+                    
+                        
+                              <a id="genSpecLboxUrl" href="http://esales.hdb.gov.sg/bp25/launch/19sep/bto/19SEPBTO_FA_GENSPECS_images_2671/genspecs_pg_s4c15.png" data-lightbox="example-7"></a>
+                        
+                    
+                </div>
+            </div>
+            
+            
+        </div>
+        
+        
+        <div id="addMapMapDiv" class="large-12 columns medium-centered" style="display: none;">
+          <div class="zoom-container">
+            <div class="panzoom-parent"> 
+              
+                <div style="overflow: hidden; position: relative;min-height: 450px; height: 450px; height: 450px;">
+                 <!--  <img class="panzoom" src="images/vendor/townmap.jpg" /> -->
+                  <img id="vendor8" class="panzoom" src="" /> 
+                </div>
+              
+              
+              
+            </div>
+           <!--   <img id="pointer" class="pointer" src="images/vendor/flower.gif" style="display: none;"/> -->
+            <div class="buttons">
+              <button type="button" class="zoom-in">Zoom In</button>
+              <button type="button" class="zoom-out">Zoom Out</button>
+            </div>
+          </div>
+        </div>
+        
+        
+        <div id="floorPlan" class="large-12 columns medium-centered" style="display: none;">
+            <div class="row collapse">
+                <div class="large-12 columns medium-centered">
+                    <div class="medium-12 columns">
+                        <br>
+                        <span id="floorplan-title">
+                            Please click on the unit number to view the floorplan.
+                        </span>
+                        <br>
+                        <div id="floorplan-units">
+                            
+                        </div>
+                        <br>
+                    </div>            
+                </div>        
+            </div>
+            <div class="row collapse">
+                <div class="content-wrapper row">
+                    <div class="large-12 columns medium-centered">
+                        <br>
+                        <span id="displayTitle"></span>
+                        <br>
+                        <div id="pdfScreen"></div>
+                        
+                    </div>
+                </div>           
+            </div>
+        </div>
+
+        <div id="rp" class="large-12 columns medium-centered" style="display: none;">
+            <div class="row collapse">
+                <div class="large-12 columns medium-centered">
+                    <div class="medium-12 columns">
+
+                        <div id="isMsg"></div>
+
+                        <div id="displayUnitNo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row collapse">
+                <div class="content-wrapper row">
+                    <div class="large-12 columns medium-centered">
+                        <div class="sliderContainer">
+                            <div class="slider slider-for"></div>
+                            <div class="slider slider-nav"></div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row form-row" id="socialFooter" style="font-size:12px; display: none;">
+            
+                <!-- ~ Link to OneMap for information on other social facilities in the town. -->
+                For more information on other social facilities, please refer to&nbsp; 
+                <a href="javascript:openSocial()">OneMap</a>
+            
+        </div>
+        
+        
+</div>
+</div>
+</div>
+<!-- filler -->
+<!-- <div class="row form-row">&nbsp;</div> -->
+<input type="hidden" id="Block" name="Block" value="">
+
+<input type="hidden" id="DesType" name="DesType" value="A">
+<input type="hidden" id="EthnicA" name="EthnicA" value="Y">
+<input type="hidden" id="EthnicM" name="EthnicM" value="">
+<input type="hidden" id="EthnicC" name="EthnicC" value="">
+<input type="hidden" id="EthnicO" name="EthnicO" value="">
+<input type="hidden" id="numSPR" name="numSPR" value="">
+
+<input type="hidden" id="dteBallot" name="dteBallot" value="201909">
+<input type="hidden" id="Neighbourhood" name="Neighbourhood" value="">
+<input type="hidden" id="Contract" name="Contract" value="">
+
+
+
+
+<input type="hidden" id="BonusFlats1" name="BonusFlats1" value="N">
+<!-- <input type="hidden" id="button" name="button" value=""> -->
+<input type="hidden" id="searchDetails" name="searchDetails" value="">
+<!-- <input type="hidden" id="isTownChange" name="isTownChange" value="No"> -->
+<input type="hidden" id="brochure" name="brochure" value="true">
+</form>
+
+<!-- To add an empty row -->
+<div class="row form-row">
+</div>
+<!-- responsive design common footer -->
+<script src="/web/fi10/infoweb/common/js/FI10Zfooter.js"></script>
+<script src="script/vendor/foundation.min.js"></script>
+</body>
+<style type="text/css">
+/* added to centralise the clearing lightbox */
+.visible-img img {
+     position: absolute;
+     left: 50%;
+     top: 30%;
+     margin-left: -50%;
+     max-height: 100%;
+     max-width: 100%;
+     transform: translateY(20%) translateX(0%);
+     -webkit-transform: translateY(20%) translateX(00%);
+ }
+
+
+</style>
+
+   
+ 
+
+
+ 
+</html> 
