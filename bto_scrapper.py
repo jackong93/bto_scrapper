@@ -104,17 +104,16 @@ def get_block_details(block_number, page_source):
 
     for unit in units:
         detail = unit.find("font").attrs
+        print(detail)
 
         if detail.get("color") == "#cc0000":
-            _id = unit.find("font").text
+            _id = unit.find("font").text.strip()
             floor, unit_number = _id.split("-")
 
             units_details.append({
                 "block_number": block_number,
                 "floor": floor,
                 "unit_number": unit_number,
-                # "price": price,
-                # "area": area,
                 "unit_available": False
             })
 
