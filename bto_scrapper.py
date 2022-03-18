@@ -152,3 +152,5 @@ if __name__ == '__main__':
     df = pd.DataFrame(all_details)
     datetime_now = datetime.datetime.now().strftime("%FT%H:%m")
     df.to_csv(f"scrapped_data/prices_{datetime_now}.csv")
+
+    driver.quit()
